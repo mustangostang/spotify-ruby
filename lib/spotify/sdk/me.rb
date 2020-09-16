@@ -105,6 +105,32 @@ module Spotify
           Spotify::SDK::Artist.new(artist, self)
         end
       end
+      
+      ##
+      # Get the current user's top artists. Requires the `user-top-read` scope.
+      # GET /v1/me/top/artists
+      #
+      # @example
+      #   @sdk.me.top_artists
+      #
+      # @param [Integer] n Number of results to return.
+      # @param [Hash] override_opts Custom options for HTTParty.
+      # @return [Array] artists A list of followed artists, wrapped in Spotify::SDK::Artist
+      #
+      def top_artists(limit=50, override_opts={})
+        request = {
+          method:    :get,
+          # TODO: Spotify API bug - `limit={n}` returns n-1 artists.
+          # ^ Example: `limit=5` returns 4 artists.
+          http_path: "/v1/me/top/artists?limit=#{[limit, 50].min}",
+          keys:      %i[artists items],
+          limit:     limit
+        }
+
+        send_multiple_http_requests(request, override_opts).map do |artist|
+          Spotify::SDK::Artist.new(artist, self)
+        end
+      end
 
       private
 
