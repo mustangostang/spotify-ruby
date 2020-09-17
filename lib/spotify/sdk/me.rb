@@ -123,7 +123,7 @@ module Spotify
           # TODO: Spotify API bug - `limit={n}` returns n-1 artists.
           # ^ Example: `limit=5` returns 4 artists.
           http_path: "/v1/me/top/artists?limit=#{[limit, 50].min}",
-          keys:      %i[artists items],
+          keys:      %i[items],
           limit:     limit
         }
 
