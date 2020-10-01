@@ -115,7 +115,7 @@ module Spotify
       #
       # @param [Integer] n Number of results to return.
       # @param [Hash] override_opts Custom options for HTTParty.
-      # @return [Array] artists A list of followed artists, wrapped in Spotify::SDK::Artist
+      # @return [Array] artists A list of top artists, wrapped in Spotify::SDK::Artist
       #
       def top_artists(limit=50, override_opts={})
         request = {
@@ -129,6 +129,32 @@ module Spotify
 
         send_multiple_http_requests(request, override_opts).map do |artist|
           Spotify::SDK::Artist.new(artist, self)
+        end
+      end
+      
+      ##
+      # Get the current user's top tracks. Requires the `user-top-read` scope.
+      # GET /v1/me/top/tracks
+      #
+      # @example
+      #   @sdk.me.top_tracks
+      #
+      # @param [Integer] n Number of results to return.
+      # @param [Hash] override_opts Custom options for HTTParty.
+      # @return [Array] artists A list of top tracks, wrapped in Spotify::SDK::Item
+      #
+      def top_tracks(limit=50, override_opts={})
+        request = {
+          method:    :get,
+          # TODO: Spotify API bug - `limit={n}` returns n-1 artists.
+          # ^ Example: `limit=5` returns 4 artists.
+          http_path: "/v1/me/top/tracks?limit=#{[limit, 50].min}",
+          keys:      %i[items],
+          limit:     limit
+        }
+
+        send_multiple_http_requests(request, override_opts).map do |track|
+          Spotify::SDK::Item.new(track, self)
         end
       end
 
