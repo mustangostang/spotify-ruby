@@ -154,7 +154,7 @@ module Spotify
         }
 
         send_multiple_http_requests(request, override_opts).map do |track|
-          Spotify::SDK::Item.new(track, self)
+          Spotify::SDK::Track.new(track, self)
         end
       end
 
