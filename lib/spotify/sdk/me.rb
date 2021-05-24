@@ -47,6 +47,21 @@ module Spotify
       end
 
       ##
+      # Check playlist 
+      #
+      # @example
+      #   @sdk.me.history
+      #   @sdk.me.history(20)
+      #
+      # @param [Integer] limit How many results to request. Defaults to 10.
+      # @param [Hash] override_opts Custom options for HTTParty.
+      # @return [Array] response List of recently played tracked, in chronological order.
+      #
+      def get_playlist(playlist_id)
+        Spotify::SDK::Playlist.new({ playlist_id: playlist_id }, self)
+      end
+
+      ##
       # Check if the current user is following N users.
       #
       # @example
@@ -158,12 +173,6 @@ module Spotify
         end
       end
 
-      private
-
-      def any_of?(array, klasses) # :nodoc:
-        (array.map(&:class) - klasses).any?
-      end
-
       def send_multiple_http_requests(opts, override_opts) # :nodoc:
         response = send_http_request(opts[:method], opts[:http_path], override_opts)
         responses, next_request = hash_deep_lookup(response, opts[:keys].dup)
@@ -171,6 +180,12 @@ module Spotify
           responses += send_multiple_http_requests(opts.merge(http_path: next_request), override_opts)
         end
         responses.first(opts[:limit])
+      end
+
+      private
+
+      def any_of?(array, klasses) # :nodoc:
+        (array.map(&:class) - klasses).any?
       end
 
       def hash_deep_lookup(response, keys) # :nodoc:

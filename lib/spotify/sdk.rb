@@ -16,6 +16,7 @@ require "spotify/sdk/artist"
 require "spotify/sdk/album"
 require "spotify/sdk/image"
 require "spotify/sdk/item"
+require "spotify/sdk/playlist"
 require "spotify/sdk/track"
 
 module Spotify
